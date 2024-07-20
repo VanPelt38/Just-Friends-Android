@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "578314534994",
+    "project_id": "bestlife-68e23",
+    "storage_bucket": "bestlife-68e23.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:578314534994:android:3b57b3efab8c45c8175f8b",
+        "android_client_info": {
+          "package_name": "com.example.justfriends"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "578314534994-vssb3ie6r20o2bk0755391cnbe1kentg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDasNTDZmYXx68G9lychJtgspy56u4tELs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "578314534994-vssb3ie6r20o2bk0755391cnbe1kentg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "578314534994-e9m5cnn47k023cr3k7ks3iv0j9vuh0s4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "co.jakegordon.BestLife"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
