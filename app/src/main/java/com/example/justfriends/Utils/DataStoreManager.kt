@@ -3,10 +3,11 @@ package com.example.justfriends.Utils
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.Firebase
 
 val Context.dataStore by preferencesDataStore(name = "settings")
-private lateinit var auth: FirebaseAuth
+private var auth = Firebase.auth
 
 object DataStoreKeys {
     val email = stringPreferencesKey("email")

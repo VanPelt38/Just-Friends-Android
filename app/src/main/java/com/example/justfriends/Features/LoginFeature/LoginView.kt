@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -26,7 +27,12 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.AlertDialog
 import android.app.Application
+import androidx.compose.foundation.border
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.navigation.NavController
 import com.example.justfriends.Navigation.View
 
@@ -38,14 +44,14 @@ fun LoginView(loginViewModel: LoginViewModel) {
     JustFriendsTheme {
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primary),
+                .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-
+                Gradient()
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Spacer(modifier = Modifier.height(150.dp))
                 Text("Just Friends.",
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.White,
@@ -53,30 +59,42 @@ fun LoginView(loginViewModel: LoginViewModel) {
                 )
                 Spacer(modifier = Modifier.height(30.dp))
                 Text("New friends. Lasting memories.",
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineMedium,
                     color = Color.White,
-                    fontSize = 20.sp
+                    fontSize = 15.sp
                     )
                 Spacer(modifier = Modifier.height(120.dp))
-                TextField(
+                OutlinedTextField(
                     value = loginViewModel.userEmail.value,
                     onValueChange = { loginViewModel.userEmail.value = it },
                             modifier = Modifier
                                 .width(200.dp)
                                 .height(45.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent
+                    ),
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp),
                     singleLine = true,
                     visualTransformation = VisualTransformation.None
                 )
                 Spacer(modifier = Modifier.height(30.dp))
-                TextField(value = loginViewModel.userPassword.value,
+                OutlinedTextField(value = loginViewModel.userPassword.value,
                     onValueChange = { loginViewModel.userPassword.value = it },
                     modifier = Modifier
                         .width(200.dp)
                         .height(45.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        unfocusedBorderColor = Color.Transparent,
+                        focusedBorderColor = Color.Transparent
+                    ),
                     textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp),
                     singleLine = true,
-                    visualTransformation = VisualTransformation.None
+                    visualTransformation = PasswordVisualTransformation()
                 )
                 Spacer(modifier = Modifier.height(30.dp))
                 Button(
@@ -94,8 +112,9 @@ fun LoginView(loginViewModel: LoginViewModel) {
                 ) {
                     Text(
                         text = "sign in",
-                        color = Color.White
-
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = 20.sp
                     )
                 }
                 Spacer(modifier = Modifier.height(30.dp))
@@ -114,7 +133,9 @@ fun LoginView(loginViewModel: LoginViewModel) {
                 ) {
                     Text(
                         text = "sign up",
-                        color = Color.Black
+                        color = Color.Black,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontSize = 20.sp
                     )
                 }
                 Spacer(modifier = Modifier.height(30.dp))
@@ -124,7 +145,10 @@ fun LoginView(loginViewModel: LoginViewModel) {
                     },
                     modifier = Modifier
                         .width(400.dp)
-                        .height(40.dp)
+                        .height(40.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent
+                    )
                 ) {
                     Text(
                         text = "forgotten your password?",
@@ -154,5 +178,16 @@ fun LoginView(loginViewModel: LoginViewModel) {
             }
 
         }
+    }
+}
+
+@Composable
+fun Gradient() {
+    androidx.compose.foundation.Canvas(modifier = Modifier.fillMaxSize()) {
+        drawRect(
+            brush = Brush.verticalGradient(
+                colors = listOf(Color(red = 19, green = 0, blue = 142), Color(red = 0.510f, green = 0.482f, blue = 1.0f, alpha = 1.0f))
+            )
+        )
     }
 }

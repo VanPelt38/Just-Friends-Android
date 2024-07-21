@@ -42,21 +42,30 @@ private val LightColorScheme = lightColorScheme(
 private val GillSans = FontFamily(
     Font(R.font.gill_sans)
 )
+private val GillSansBold = FontFamily(
+    Font(R.font.gill_sans_bold)
+)
+private val GillSansBoldItalic = FontFamily(
+    Font(R.font.gill_sans_bold_italic)
+)
 
 
 private val MyTypography = Typography(
    headlineSmall = TextStyle(
        fontFamily = GillSans
    ),
+    headlineMedium = TextStyle(
+        fontFamily = GillSansBoldItalic
+    ),
     titleLarge = TextStyle(
-        fontFamily = GillSans
+        fontFamily = GillSansBold
     ),
     bodyMedium = TextStyle(
         fontFamily = GillSans
     ),
     bodyLarge = TextStyle(
         fontFamily = GillSans
-    )
+    ),
 )
 
 @Composable
