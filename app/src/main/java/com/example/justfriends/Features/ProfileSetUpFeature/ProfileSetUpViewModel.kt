@@ -46,7 +46,6 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
     var dobDate: Date? = null
     var isLoading = mutableStateOf(false)
     private lateinit var auth: FirebaseAuth
-    val userID = auth.currentUser?.uid
     var profilePicRef: String = ""
     private val db = FirebaseFirestore.getInstance()
     private val _navigateTo = MutableStateFlow<String?>(null)
@@ -57,8 +56,11 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
     val errorAlertStateTitle = _errorAlertStateTitle
 
     init {
+        auth = FirebaseAuth.getInstance()
+        println("we should init")
         viewModelScope.launch {
             connectivityObserver.observeNetworkStatus().collect { isConnected ->
+                println("network connect: ${isConnected}")
                 networkIsConnected = isConnected
             }
         }
@@ -110,7 +112,7 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
 
     fun isValidExtension(): Boolean {
         val validExts = listOf("jpg", "png", "jpeg", "heic")
-            return validExts.contains(imageExt!!.lowercase())
+        return validExts.contains(imageExt!!.lowercase())
     }
 
     suspend fun uploadImageToFirebase() {
@@ -128,6 +130,7 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
 
     suspend fun saveProfileToFirestore(age: Int) {
 
+        val userID = auth.currentUser?.uid
         val batch: WriteBatch = db.batch()
         val collection1 = db.collection("users")
             .document(userID ?: "")
@@ -158,6 +161,7 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
 
     suspend fun flagProfileSetUp() {
 
+        val userID = auth.currentUser?.uid
         val profileSetUpData = mapOf(
             "profileSetUp" to true
         )
@@ -176,6 +180,7 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
 
     fun profileCompletePressed() {
 
+        println("profile complet epressed")
         isLoading.value = true
         if (networkIsConnected) {
             if (uri != null && name.value != "" && dobString.value != null) {
