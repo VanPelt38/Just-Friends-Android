@@ -1,9 +1,6 @@
 package com.example.justfriends.Features.LoginFeature
 
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.TextField
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,17 +21,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.material3.AlertDialog
-import android.app.Application
-import androidx.compose.foundation.border
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.navigation.NavController
-import com.example.justfriends.Navigation.View
 
 @Composable
 fun LoginView(loginViewModel: LoginViewModel) {

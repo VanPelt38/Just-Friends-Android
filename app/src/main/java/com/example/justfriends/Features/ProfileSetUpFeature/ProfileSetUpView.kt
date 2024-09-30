@@ -50,6 +50,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+//import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.CircleShape
@@ -57,7 +58,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
 import androidx.compose.ui.layout.ContentScale
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
@@ -85,7 +85,8 @@ fun ProfileSetUpView(viewModel: ProfileSetUpViewModel) {
     JustFriendsTheme {
         Box() {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(40.dp)
             ) {
                 Spacer(modifier = Modifier.height(120.dp))
                 Text(
@@ -101,31 +102,35 @@ fun ProfileSetUpView(viewModel: ProfileSetUpViewModel) {
                     SmileyFace(vm = viewModel)
                     ChoosePhotoButton(vm = viewModel)
                 }
-                Spacer(modifier = Modifier.height(30.dp))
-                Row {
+                Spacer(modifier = Modifier.height(50.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Text(
                         "name:",
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.Black,
                         fontSize = 26.sp
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.weight(1f))
                     TextField(
                         value = viewModel.name.value,
                         onValueChange = { viewModel.name.value = it },
                         modifier = Modifier
                             .width(200.dp)
-                            .height(45.dp),
+                            .height(50.dp),
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent
                         ),
-                        textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.sp),
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 20.sp),
                         singleLine = true
                     )
                 }
                 Spacer(modifier = Modifier.height(30.dp))
-                Row {
+                Row(
+                    modifier = Modifier.align(Alignment.Start)
+                ) {
                     Text(
                         "date of birth:",
                         style = MaterialTheme.typography.titleLarge,
@@ -136,14 +141,17 @@ fun ProfileSetUpView(viewModel: ProfileSetUpViewModel) {
                     DatePickerButton(vm = viewModel, onClick = { mDatePickerDialog.show() })
                 }
                 Spacer(modifier = Modifier.height(30.dp))
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         "gender:",
                         style = MaterialTheme.typography.titleLarge,
                         color = Color.Black,
                         fontSize = 26.sp
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.weight(1f))
                     GenderButtons(vm = viewModel)
                 }
                 Spacer(modifier = Modifier.height(50.dp))
@@ -196,7 +204,10 @@ fun ProfileSetUpView(viewModel: ProfileSetUpViewModel) {
                         .clickable { }
                         .align(Alignment.Center)
                 ) {
-                    CircularProgressIndicator(color = Color.White)
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
         }
@@ -219,7 +230,8 @@ fun GenderButtons(vm: ProfileSetUpViewModel) {
                             onOptionsSelected(text)
                         }
                     )
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 RadioButton(
                     selected = (text == selectedGender ),
@@ -247,10 +259,10 @@ fun DatePickerButton(
             .drawBehind {
                 val y = size.height
                 drawLine(
-                    brush = SolidColor(Color.Black),
+                    brush = SolidColor(Color(red = 19, green = 0, blue = 142)),
                     start = Offset(0f, y),
                     end = Offset(size.width, y),
-                    strokeWidth = 2f
+                    strokeWidth = 8f
                 )
             }
     ) {
@@ -264,7 +276,7 @@ fun DatePickerButton(
                 .height(40.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = Color.White,
+                containerColor = Color.Transparent,
                 contentColor = Color.White
             )
         ) {

@@ -140,7 +140,7 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
         val profileData = mapOf(
             "age" to age,
             "gender" to selectedGender,
-            "name" to name,
+            "name" to name.value,
             "picture" to uploadedImageURL,
             "userID" to userID,
             "profilePicRef" to profilePicRef
@@ -180,7 +180,6 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
 
     fun profileCompletePressed() {
 
-        println("profile complet epressed")
         isLoading.value = true
         if (networkIsConnected) {
             if (uri != null && name.value != "" && dobString.value != null) {
