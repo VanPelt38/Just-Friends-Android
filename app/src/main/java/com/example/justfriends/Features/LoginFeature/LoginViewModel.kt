@@ -5,23 +5,21 @@ import androidx.compose.runtime.mutableStateOf
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import androidx.datastore.preferences.core.edit
 import android.app.Application
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewModelScope
 import com.example.justfriends.Navigation.View
 import com.example.justfriends.Utils.DataStoreKeys
-import com.example.justfriends.Utils.dataStore
+import com.example.justfriends.Utils.DataStoreManager
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 
-class LoginViewModel(justFriends: Application): AndroidViewModel(justFriends) {
+class LoginViewModel(justFriends: Application, private val dataStoreManager: DataStoreManager): AndroidViewModel(justFriends) {
 
-    private val appContext = getApplication<Application>().applicationContext
     var userEmail = mutableStateOf("")
     var userPassword = mutableStateOf("")
     private val _errorAlertState = mutableStateOf<String?>(null)
@@ -35,38 +33,18 @@ class LoginViewModel(justFriends: Application): AndroidViewModel(justFriends) {
 
     init {
         viewModelScope.launch {
-            appContext.dataStore.data.collect { preferences ->
-                userEmail.value = preferences[DataStoreKeys.email] ?: ""
-                userPassword.value = preferences[DataStoreKeys.password] ?: ""
-            }
+            userEmail.value = dataStoreManager.read(DataStoreKeys.email)
+            userPassword.value = dataStoreManager.read(DataStoreKeys.password)
         }
     }
 
-
     fun onNavigate(destination: String) {
         _navigateTo.value = destination
+
     }
 
     fun onNavigationComplete() {
         _navigateTo.value = null
-    }
-
-    fun getUserPreference(key: String): String {
-        var returnValue = ""
-        viewModelScope.launch {
-            appContext.dataStore.data.collect { preferences ->
-                if (key == "password") {
-                    returnValue = preferences[DataStoreKeys.password] ?: ""
-                }
-                if (key == "email") {
-                    returnValue = preferences[DataStoreKeys.email] ?: ""
-                }
-                if (key == "profileSetUp") {
-                    returnValue = preferences[DataStoreKeys.profileSetUp] ?: ""
-                }
-            }
-        }
-        return returnValue
     }
 
     fun signInPressed() {
@@ -87,20 +65,19 @@ class LoginViewModel(justFriends: Application): AndroidViewModel(justFriends) {
         if (userEmail.value != "" && userPassword.value != "") {
 
             viewModelScope.launch {
-                appContext.dataStore.edit { settings ->
-                    settings[DataStoreKeys.email] = userEmail.value
-                    settings[DataStoreKeys.password] = userPassword.value
-                }
+                dataStoreManager.write(DataStoreKeys.email, userEmail.value)
+                dataStoreManager.write(DataStoreKeys.password, userPassword.value)
             }
             auth.createUserWithEmailAndPassword(userEmail.value, userPassword.value)
                 .addOnCompleteListener() { task ->
                     if (task.isSuccessful) {
                         viewModelScope.launch {
-                        login(email = userEmail.value, password = userPassword.value)
-                    }
+                            login(email = userEmail.value, password = userPassword.value)
+                        }
                     } else {
                         _errorAlertStateTitle.value = "Uh-oh"
-                        _errorAlertState.value = "There was an error registering: ${task.exception?.localizedMessage}"
+                        _errorAlertState.value =
+                            "There was an error registering: ${task.exception?.localizedMessage}"
                     }
                 }
         } else {
@@ -112,37 +89,17 @@ class LoginViewModel(justFriends: Application): AndroidViewModel(justFriends) {
         auth = Firebase.auth
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener() { task ->
-                if (task.isSuccessful) {
+            if (task.isSuccessful) {
 
-                   val userID = auth.currentUser?.uid
+                val userID = auth.currentUser?.uid
 
-                    if (userID != null) {
+                if (userID != null) {
 
-                        viewModelScope.launch {
-                            appContext.dataStore.edit { settings ->
-                                settings[DataStoreKeys.email] = userEmail.value
-                                settings[DataStoreKeys.password] = userPassword.value
-                            }
-                        }
+                    viewModelScope.launch {
+                        dataStoreManager.write(DataStoreKeys.email, userEmail.value)
+                        dataStoreManager.write(DataStoreKeys.password, userPassword.value)
 
-                        if (getUserPreference(key = "profileSetUp") != "") {
-                            if (getUserPreference(key = "profileSetUp") == "true") {
-                                viewModelScope.launch {
-                                    appContext.dataStore.edit { settings ->
-                                        settings[DataStoreKeys.loggedInHome] = "true"
-                                    }
-                                }
-                                onNavigate(View.home.name)
-                            } else {
-                                viewModelScope.launch {
-                                    appContext.dataStore.edit { settings ->
-                                        settings[DataStoreKeys.loggedInProfile] = "true"
-                                    }
-                                }
-                               onNavigate(View.profileSetUp.name)
-                            }
-                        } else {
-                            viewModelScope.launch {
+
                             val userCollection = db.collection("users")
                                 .document(userID)
                                 .collection("registration")
@@ -150,55 +107,50 @@ class LoginViewModel(justFriends: Application): AndroidViewModel(justFriends) {
                                 .get()
                                 .await()
 
-                                if (userCollection.exists()) {
-                                    val data = userCollection.data
-                                    if (data != null) {
-                                        if (data["profileSetUp"] ?: "false" == "true") {
-                                            viewModelScope.launch {
-                                                appContext.dataStore.edit { settings ->
-                                                    settings[DataStoreKeys.loggedInHome] = "true"
-                                                }
-                                            }
-                                            onNavigate(View.home.name)
-                                        } else {
-                                            viewModelScope.launch {
-                                                appContext.dataStore.edit { settings ->
-                                                    settings[DataStoreKeys.loggedInProfile] = "true"
-                                                }
-                                            }
-                                            onNavigate(View.profileSetUp.name)
-                                        }
-                                    }
-                                } else {
-                                    val newData = mapOf(
-                                        "userID" to userID,
-                                        "profileSetUp" to false
-                                    )
-                                    val userRegistrationID = db.collection("users")
-                                        .document(userID)
-                                        .collection("registration")
-                                        .document(userID)
-                                        .set(newData)
-                                        .await()
+                            if (userCollection.exists()) {
 
-                                    viewModelScope.launch {
-                                        appContext.dataStore.edit { settings ->
-                                            settings[DataStoreKeys.profileSetUp] = "false"
-                                            settings[DataStoreKeys.loggedInProfile] = "true"
-                                        }
+                                val data = userCollection.data
+                                if (data != null) {
+                                    if (data["profileSetUp"] as? Boolean ?: false) {
+
+                                            dataStoreManager.write(
+                                                DataStoreKeys.loggedInHome,
+                                                "true"
+                                            )
+
+                                        onNavigate(View.main.name)
+                                    } else {
+                                            dataStoreManager.write(
+                                                DataStoreKeys.loggedInProfile,
+                                                "true"
+                                            )
+
                                         onNavigate(View.profileSetUp.name)
                                     }
                                 }
+                            } else {
+                                val newData = mapOf(
+                                    "userID" to userID,
+                                    "profileSetUp" to false
+                                )
+
+                                val userRegistrationID = db.collection("users")
+                                    .document(userID)
+                                    .collection("registration")
+                                    .document(userID)
+                                    .set(newData)
+                                    .await()
+
+                                    dataStoreManager.write(DataStoreKeys.loggedInProfile, "true")
+                                    onNavigate(View.profileSetUp.name)
                             }
-
-                        }
-
-                    }
-
-                } else {
-                    _errorAlertStateTitle.value = "Uh-oh"
-                    _errorAlertState.value = "There was an error signing in: ${task.exception?.localizedMessage}"
                 }
+                }
+            } else {
+                _errorAlertStateTitle.value = "Uh-oh"
+                _errorAlertState.value =
+                    "There was an error signing in: ${task.exception?.localizedMessage}"
+            }
         }
     }
 

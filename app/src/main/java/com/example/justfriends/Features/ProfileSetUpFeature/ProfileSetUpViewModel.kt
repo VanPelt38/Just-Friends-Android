@@ -9,12 +9,11 @@ import android.app.Application
 import android.database.Cursor
 import android.provider.OpenableColumns
 import android.util.Log
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.viewModelScope
 import com.example.justfriends.Navigation.View
 import com.example.justfriends.Utils.DataStoreKeys
+import com.example.justfriends.Utils.DataStoreManager
 import com.example.justfriends.Utils.NetworkManager
-import com.example.justfriends.Utils.dataStore
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -30,9 +29,8 @@ import java.util.Calendar
 import java.util.UUID
 import java.util.Date
 
-class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFriends) {
+class ProfileSetUpViewModel(justFriends: Application, private val dataStoreManager: DataStoreManager): AndroidViewModel(justFriends) {
 
-    private val appContext = getApplication<Application>().applicationContext
     private val connectivityObserver = NetworkManager(justFriends)
     private var networkIsConnected = true
     val genderOptions = listOf("M", "F")
@@ -57,10 +55,8 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
 
     init {
         auth = FirebaseAuth.getInstance()
-        println("we should init")
         viewModelScope.launch {
             connectivityObserver.observeNetworkStatus().collect { isConnected ->
-                println("network connect: ${isConnected}")
                 networkIsConnected = isConnected
             }
         }
@@ -190,11 +186,9 @@ class ProfileSetUpViewModel(justFriends: Application): AndroidViewModel(justFrie
                         val age = calculateAge()
                         saveProfileToFirestore(age = age)
                         flagProfileSetUp()
-                        appContext.dataStore.edit { settings ->
-                            settings[DataStoreKeys.loggedInHome] = "true"
-                        }
+                        dataStoreManager.write(DataStoreKeys.loggedInHome, "true")
                         isLoading.value = false
-                        onNavigate(View.home.name)
+                        onNavigate(View.main.name)
                     }
 
                 } else {
