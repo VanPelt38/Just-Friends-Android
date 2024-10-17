@@ -2,6 +2,7 @@ package com.example.justfriends.Features.HomeFeature
 
 import android.app.Application
 import android.net.Uri
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,17 +20,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class HomeViewModel(justFriends: Application, private val dataStoreManager: DataStoreManager): AndroidViewModel(justFriends) {
+
+class HomeViewModel(justFriends: Application,
+                    private val dataStoreManager: DataStoreManager,
+    private val navBarTitle: MutableState<String>
+): AndroidViewModel(justFriends) {
 
     private val db = FirebaseFirestore.getInstance()
     private lateinit var auth: FirebaseAuth
     var userName = mutableStateOf("")
     var uri by mutableStateOf<Uri?>( null)
+    private set
     private val _navigateTo = MutableStateFlow<String?>(null)
     val navigateTo: StateFlow<String?> = _navigateTo.asStateFlow()
 
     init {
         auth = FirebaseAuth.getInstance()
+        setFalseForOnChatView()
+        loadUserData()
+        setDistancePreference()
     }
 
     fun setFalseForOnChatView() {
@@ -77,11 +86,10 @@ class HomeViewModel(justFriends: Application, private val dataStoreManager: Data
             val userProfile = userProfileQuery.get().await()
 
             if (!userProfile.isEmpty()) {
-
                 for (doc in userProfile.documents) {
                     val data = doc.data
                     if (data != null) {
-                        userName.value = data["name"] as? String ?: ""
+                        navBarTitle.value = "Hi ${data["name"] as? String ?: ""}"
                         val imageURL = data["picture"] as? String ?: ""
                         uri = imageURL.let { Uri.parse(it) }
                     }

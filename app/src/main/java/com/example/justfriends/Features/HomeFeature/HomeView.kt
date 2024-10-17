@@ -26,7 +26,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -36,15 +35,16 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 
 
+
+
+
 @Composable
 fun HomeView(viewModel: HomeViewModel, padding: PaddingValues) {
-    LaunchedEffect(Unit) {
-        viewModel.setFalseForOnChatView()
-        viewModel.loadUserData()
-        viewModel.setDistancePreference()
-    }
+
                 Column(
-                    modifier = Modifier.padding()
+                    modifier = Modifier.padding(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+
                 ) {
                     Box(
                         contentAlignment = Alignment.BottomCenter
@@ -52,15 +52,15 @@ fun HomeView(viewModel: HomeViewModel, padding: PaddingValues) {
                         ProfilePicture(vm = viewModel)
                         ProfileButton(vm = viewModel)
                     }
-                    Spacer(modifier = Modifier.height(50.dp))
+                    Spacer(modifier = Modifier.height(125.dp))
                     Button(
                         onClick = {
                            // GO TO DATE PLAN VIEW
                         },
                         modifier = Modifier
-                            .width(200.dp)
-                            .height(40.dp),
-                        shape = RoundedCornerShape(16.dp),
+                            .width(240.dp)
+                            .height(60.dp),
+                        shape = RoundedCornerShape(20.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color.Black,
                             contentColor = Color.White
@@ -70,18 +70,18 @@ fun HomeView(viewModel: HomeViewModel, padding: PaddingValues) {
                             text = "make a friend",
                             color = Color.White,
                             style = MaterialTheme.typography.titleLarge,
-                            fontSize = 20.sp
+                            fontSize = 22.sp
                         )
                     }
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(30.dp))
                     Button(
                         onClick = {
                             viewModel.navigateToMostCompatible()
                         },
                         modifier = Modifier
-                            .width(200.dp)
-                            .height(40.dp),
-                        shape = RoundedCornerShape(16.dp),
+                            .width(240.dp)
+                            .height(60.dp),
+                        shape = RoundedCornerShape(20.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Color(red = 1f, green = 0.8f, blue = 0.8f, alpha = 1f),
                             contentColor = Color.White
@@ -91,7 +91,7 @@ fun HomeView(viewModel: HomeViewModel, padding: PaddingValues) {
                             text = "most compatible",
                             color = Color.Black,
                             style = MaterialTheme.typography.titleLarge,
-                            fontSize = 20.sp
+                            fontSize = 22.sp
                         )
                     }
                 }
@@ -99,9 +99,11 @@ fun HomeView(viewModel: HomeViewModel, padding: PaddingValues) {
 
 @Composable
 fun ProfilePicture(vm: HomeViewModel) {
+
     val config = LocalConfiguration.current
-    val screenHeight = config.screenHeightDp.dp
+    val screenHeight = config.screenHeightDp.dp - 112.dp
     val imageHeight = screenHeight / 2
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,7 +119,7 @@ fun ProfilePicture(vm: HomeViewModel) {
             )
         } else {
             Image(
-                painter = rememberAsyncImagePainter(model = vm.uri),
+                painter = rememberAsyncImagePainter(model = vm.uri.toString()),
                 contentDescription = "Profile Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()

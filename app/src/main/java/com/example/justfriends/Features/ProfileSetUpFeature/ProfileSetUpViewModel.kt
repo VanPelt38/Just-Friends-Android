@@ -118,7 +118,8 @@ class ProfileSetUpViewModel(justFriends: Application, private val dataStoreManag
             profilePicRef = imageFileName
             val imageRef: StorageReference = storageRef.child("images/$imageFileName")
             imageRef.putFile(uri!!).await()
-            uploadedImageURL = imageRef.downloadUrl.toString()
+            val downloadUrl = imageRef.downloadUrl.await()
+            uploadedImageURL = downloadUrl.toString()
         } catch(e: Exception) {
             println("upload image failed: ${e.message}")
         }

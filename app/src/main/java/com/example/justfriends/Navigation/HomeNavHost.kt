@@ -15,15 +15,20 @@ import com.example.justfriends.Features.HomeFeature.HomeView
 import com.example.justfriends.Features.MostCompatibleFeature.MostCompatibleView
 import com.example.justfriends.Features.UserProfileFeature.UserProfileView
 import com.example.justfriends.Utils.DataStoreManager
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.remember
 
 
 @Composable
 fun HomeNavHost(navController: NavHostController,
                 padding: PaddingValues,
-                dataStoreManager: DataStoreManager
+                dataStoreManager: DataStoreManager,
+                navBarTitle: MutableState<String>
 ) {
     val homeViewModel = HomeViewModel(LocalContext.current.applicationContext as Application,
-        dataStoreManager = dataStoreManager
+        dataStoreManager = dataStoreManager,
+        navBarTitle = navBarTitle
     )
     val homeViewState by homeViewModel.navigateTo.collectAsState()
 
