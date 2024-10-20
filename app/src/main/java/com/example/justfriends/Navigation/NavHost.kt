@@ -18,7 +18,7 @@ import com.example.justfriends.Utils.DataStoreManager
 @Composable
 fun NavHost(
     navController: NavHostController,
-    startDestination: String = NavigationItem.Login.route,
+    startDestination: String,
     loginViewModel: LoginViewModel,
     profileSetUpViewModel: ProfileSetUpViewModel,
     dataStoreManager: DataStoreManager

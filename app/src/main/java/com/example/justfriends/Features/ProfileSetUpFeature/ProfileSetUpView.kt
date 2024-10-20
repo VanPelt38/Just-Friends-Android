@@ -62,9 +62,11 @@ fun ProfileSetUpView(viewModel: ProfileSetUpViewModel) {
 
  val mContext = LocalContext.current
     val mCalendar = Calendar.getInstance()
+    mCalendar.add(Calendar.YEAR, -18)
     val mYear = mCalendar.get(Calendar.YEAR)
     val mMonth = mCalendar.get(Calendar.MONTH)
     val mDay = mCalendar.get(Calendar.DAY_OF_MONTH)
+    val eighteenYearsAgo = mCalendar.timeInMillis
 
     val mDatePickerDialog = DatePickerDialog(
         mContext,
@@ -77,6 +79,7 @@ fun ProfileSetUpView(viewModel: ProfileSetUpViewModel) {
             Log.d("", "date chosen: ${viewModel.dobDate}")
         }, mYear, mMonth, mDay
     )
+    mDatePickerDialog.datePicker.maxDate = eighteenYearsAgo
     val errorAlertStateView by viewModel.errorAlertState
 
     JustFriendsTheme {
