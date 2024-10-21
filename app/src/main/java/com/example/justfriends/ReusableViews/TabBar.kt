@@ -60,15 +60,10 @@ fun TabBar(selectedTab: Int, onSelected: (Int) -> Unit) {
                 containerColor = Color.Transparent
             )
         ) {
-//            Icon(
-//                imageVector = Icons.Outlined.Person,
-//                contentDescription = "friends",
-//                tint = if (selectedTab == 1) Color.White else Color.Gray
-//            )
             Icon(
                 painter = painterResource(id = R.drawable.group_24px),
                 contentDescription = "friend",
-                tint = Color.White
+                tint = if (selectedTab == 1) Color.White else Color.Gray
             )
         }
         IconButton(

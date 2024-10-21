@@ -55,7 +55,7 @@ fun HomeView(viewModel: HomeViewModel, padding: PaddingValues) {
                     Spacer(modifier = Modifier.height(125.dp))
                     Button(
                         onClick = {
-                           // GO TO DATE PLAN VIEW
+                           viewModel.navigateToDatePlanner()
                         },
                         modifier = Modifier
                             .width(240.dp)

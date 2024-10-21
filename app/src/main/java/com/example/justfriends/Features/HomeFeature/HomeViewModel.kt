@@ -28,7 +28,6 @@ class HomeViewModel(justFriends: Application,
 
     private val db = FirebaseFirestore.getInstance()
     private lateinit var auth: FirebaseAuth
-    var userName = mutableStateOf("")
     var uri by mutableStateOf<Uri?>( null)
     private set
     private val _navigateTo = MutableStateFlow<String?>(null)
@@ -107,11 +106,16 @@ class HomeViewModel(justFriends: Application,
     }
 
    fun navigateToProfile() {
+       println("calling navigate to profle")
        onNavigate(View.userProfile.name)
    }
 
     fun navigateToMostCompatible() {
         onNavigate(View.mostCompatible.name)
+    }
+
+    fun navigateToDatePlanner() {
+        onNavigate(View.datePlanner.name)
     }
 
     fun onNavigate(destination: String) {

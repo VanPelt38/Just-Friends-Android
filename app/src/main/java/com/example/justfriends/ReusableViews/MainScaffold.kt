@@ -1,5 +1,6 @@
 package com.example.justfriends.ReusableViews
 
+import android.app.Application
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,14 +22,37 @@ import androidx.navigation.compose.rememberNavController
 import com.example.justfriends.Navigation.HomeNavHost
 import com.example.justfriends.Utils.DataStoreManager
 import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.sp
+import com.example.justfriends.Features.HomeFeature.HomeViewModel
+import com.example.justfriends.Features.FriendsFeature.FriendsViewModel
+import com.example.justfriends.Features.SettingsFeature.SettingsViewModel
+import com.example.justfriends.Navigation.FriendsNavHost
+import com.example.justfriends.Navigation.SettingsNavHost
 
 @Composable
 fun MainView(dataStoreManager: DataStoreManager) {
 
     var selectedTab by remember { mutableStateOf(0) }
     val homeNavController = rememberNavController()
+    val friendsNavController = rememberNavController()
+    val settingsNavController = rememberNavController()
     val topBarTitle = remember { mutableStateOf("") }
+    val homeViewModel = HomeViewModel(
+        LocalContext.current.applicationContext as Application,
+        dataStoreManager = dataStoreManager,
+        navBarTitle = topBarTitle
+    )
+    val friendsViewModel = FriendsViewModel(
+        LocalContext.current.applicationContext as Application,
+        dataStoreManager = dataStoreManager,
+        navBarTitle = topBarTitle
+    )
+    val settingsViewModel = SettingsViewModel(
+        LocalContext.current.applicationContext as Application,
+        dataStoreManager = dataStoreManager,
+        navBarTitle = topBarTitle
+    )
 
     JustFriendsTheme {
         Scaffold(
@@ -63,13 +87,18 @@ fun MainView(dataStoreManager: DataStoreManager) {
                     when (selectedTab) {
                         0 -> HomeNavHost(navController = homeNavController,
                             padding = paddingValues,
-                            dataStoreManager = dataStoreManager,
-                            navBarTitle = topBarTitle
+                            homeViewModel
                         )
-                        // ADD MORE NAVIGATION OPTIONS HERE
+                        1 -> FriendsNavHost(navController = friendsNavController,
+                            padding = paddingValues,
+                            friendsViewModel
+                            )
+                        2 -> SettingsNavHost(navController = settingsNavController,
+                            padding = paddingValues,
+                            settingsViewModel
+                        )
                     }
                 }
-
             }
         )
     }
