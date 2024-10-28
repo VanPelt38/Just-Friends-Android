@@ -8,20 +8,24 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
+import com.example.justfriends.Features.AvailablePeopleFeature.AvailablePeopleView
 import com.example.justfriends.Features.HomeFeature.HomeViewModel
 import com.example.justfriends.Features.HomeFeature.HomeView
 import com.example.justfriends.Features.MostCompatibleFeature.MostCompatibleView
 import com.example.justfriends.Features.UserProfileFeature.UserProfileView
 import com.example.justfriends.Features.DatePlannerFeature.DatePlannerView
+import com.example.justfriends.Features.DatePlannerFeature.DatePlannerViewModel
 
 
 @Composable
 fun HomeNavHost(navController: NavHostController,
                 padding: PaddingValues,
-                homeViewModel: HomeViewModel
+                homeViewModel: HomeViewModel,
+                datePlannerViewModel: DatePlannerViewModel
 ) {
 
     val homeViewState by homeViewModel.navigateTo.collectAsState()
+    val datePlannerViewState by datePlannerViewModel.navigateTo.collectAsState()
 
     LaunchedEffect(homeViewState) {
         homeViewState?.let { destination ->
@@ -30,10 +34,18 @@ fun HomeNavHost(navController: NavHostController,
         }
     }
 
+    LaunchedEffect(datePlannerViewState) {
+        datePlannerViewState?.let { destination ->
+            navController.navigate(destination)
+            datePlannerViewModel.onNavigationComplete()
+        }
+    }
+
     NavHost(navController = navController, startDestination = NavigationItem.Home.route) {
         composable(NavigationItem.Home.route) { HomeView(homeViewModel, padding) }
         composable(NavigationItem.UserProfile.route) { UserProfileView() }
         composable(NavigationItem.MostCompatible.route) { MostCompatibleView() }
-        composable(NavigationItem.DatePlanner.route) { DatePlannerView() }
+        composable(NavigationItem.DatePlanner.route) { DatePlannerView(datePlannerViewModel) }
+        composable(NavigationItem.AvailablePeople.route) { AvailablePeopleView() }
     }
 }

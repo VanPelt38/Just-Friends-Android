@@ -63,6 +63,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.3")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("androidx.activity:activity-compose:1.9.3")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

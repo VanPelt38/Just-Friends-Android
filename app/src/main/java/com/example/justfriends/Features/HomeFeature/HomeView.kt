@@ -1,5 +1,6 @@
 package com.example.justfriends.Features.HomeFeature
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -25,11 +26,13 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -40,6 +43,14 @@ import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun HomeView(viewModel: HomeViewModel, padding: PaddingValues) {
+
+    val activity = LocalContext.current as? Activity
+
+    LaunchedEffect(Unit) {
+        activity?.let {
+            viewModel.setNavTitle()
+        }
+    }
 
                 Column(
                     modifier = Modifier.padding(),

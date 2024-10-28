@@ -32,12 +32,17 @@ class HomeViewModel(justFriends: Application,
     private set
     private val _navigateTo = MutableStateFlow<String?>(null)
     val navigateTo: StateFlow<String?> = _navigateTo.asStateFlow()
+    var navBarString: String = ""
 
     init {
         auth = FirebaseAuth.getInstance()
         setFalseForOnChatView()
         loadUserData()
         setDistancePreference()
+    }
+
+    fun setNavTitle() {
+            navBarTitle.value = navBarString
     }
 
     fun setFalseForOnChatView() {
@@ -88,7 +93,8 @@ class HomeViewModel(justFriends: Application,
                 for (doc in userProfile.documents) {
                     val data = doc.data
                     if (data != null) {
-                        navBarTitle.value = "Hi ${data["name"] as? String ?: ""}"
+                        navBarString = "Hi ${data["name"] as? String ?: ""}"
+                        navBarTitle.value = navBarString
                         val imageURL = data["picture"] as? String ?: ""
                         uri = imageURL.let { Uri.parse(it) }
                     }
@@ -106,7 +112,6 @@ class HomeViewModel(justFriends: Application,
     }
 
    fun navigateToProfile() {
-       println("calling navigate to profle")
        onNavigate(View.userProfile.name)
    }
 
