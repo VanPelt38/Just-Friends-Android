@@ -71,7 +71,6 @@ class DatePlannerViewModel(private val justFriends: Application,
 
     init {
         auth = FirebaseAuth.getInstance()
-        requestLocationUpdates()
     }
 
     override fun onCleared() {
@@ -93,7 +92,7 @@ class DatePlannerViewModel(private val justFriends: Application,
         }
     }
 
-    private fun requestLocationUpdates() {
+    fun requestLocationUpdates() {
 
         if (ActivityCompat.checkSelfPermission(justFriends, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             val locationRequest = LocationRequest.create().apply {

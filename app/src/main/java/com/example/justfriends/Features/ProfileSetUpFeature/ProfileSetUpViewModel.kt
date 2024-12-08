@@ -52,6 +52,14 @@ class ProfileSetUpViewModel(justFriends: Application, private val dataStoreManag
     val errorAlertState = _errorAlertState
     private val _errorAlertStateTitle = mutableStateOf<String?>(null)
     val errorAlertStateTitle = _errorAlertStateTitle
+    val selectedGenderFireStore: String
+        get() = if (selectedGender == "F") {
+            "female"
+        } else if (selectedGender == "M") {
+            "male"
+        } else {
+            "error"
+        }
 
     init {
         auth = FirebaseAuth.getInstance()
@@ -136,7 +144,7 @@ class ProfileSetUpViewModel(justFriends: Application, private val dataStoreManag
         val collection2 = db.collection("users").document(userID ?: "")
         val profileData = mapOf(
             "age" to age,
-            "gender" to selectedGender,
+            "gender" to selectedGenderFireStore,
             "name" to name.value,
             "picture" to uploadedImageURL,
             "userID" to userID,

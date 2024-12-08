@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.justfriends.Features.AvailablePeopleFeature.AvailablePeopleViewModel
 import com.example.justfriends.Features.DatePlannerFeature.DatePlannerViewModel
 import com.example.justfriends.Features.ForgotPasswordFeature.ForgotPasswordView
 import com.example.justfriends.Features.FriendsFeature.FriendsViewModel
@@ -22,6 +23,8 @@ import com.example.justfriends.Features.ProfileSetUpFeature.ProfileSetUpView
 import com.example.justfriends.Features.ProfileSetUpFeature.ProfileSetUpViewModel
 import com.example.justfriends.Features.SettingsFeature.SettingsViewModel
 import com.example.justfriends.Utils.DataStoreManager
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun NavHost(
@@ -36,6 +39,8 @@ fun NavHost(
     val profileSetUpViewState by profileSetUpViewModel.navigateTo.collectAsState()
 
     val topBarTitle = remember { mutableStateOf("") }
+    val topBarIconAction = remember { mutableStateOf({}) }
+    val notificationCount = remember { mutableStateOf(0) }
 
     val homeViewModel = HomeViewModel(
         LocalContext.current.applicationContext as Application,
@@ -56,6 +61,13 @@ fun NavHost(
         LocalContext.current.applicationContext as Application,
         dataStoreManager = dataStoreManager,
         navBarTitle = topBarTitle
+    )
+    val availablePeopleViewModel = AvailablePeopleViewModel(
+        LocalContext.current.applicationContext as Application,
+        dataStoreManager = dataStoreManager,
+        navBarTitle = topBarTitle,
+        navBarAction = topBarIconAction,
+        notificationCount = notificationCount
     )
 
     LaunchedEffect(loginViewState) {
@@ -79,8 +91,11 @@ fun NavHost(
             friendsViewModel,
             datePlannerViewModel,
             settingsViewModel,
-            topBarTitle
-            ) }
+            availablePeopleViewModel,
+            topBarTitle,
+            topBarIconAction,
+            notificationCount
+            )}
         composable(NavigationItem.ProfileSetUp.route) { ProfileSetUpView(profileSetUpViewModel) }
         composable(NavigationItem.ForgotPassword.route) { ForgotPasswordView() }
     }

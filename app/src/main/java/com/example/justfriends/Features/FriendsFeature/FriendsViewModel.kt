@@ -1,6 +1,7 @@
 package com.example.justfriends.Features.FriendsFeature
 
 import android.app.Application
+import android.app.Notification
 import android.net.Uri
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue

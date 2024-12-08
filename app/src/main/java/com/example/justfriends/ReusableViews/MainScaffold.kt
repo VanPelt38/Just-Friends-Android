@@ -25,8 +25,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.AlertDialog
@@ -45,6 +48,11 @@ import com.example.justfriends.Navigation.SettingsNavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.firebase.auth.FirebaseAuth
 import androidx.compose.runtime.remember
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.example.justfriends.Features.AvailablePeopleFeature.AvailablePeopleViewModel
+import com.example.justfriends.R
 import com.example.justfriends.Utils.DataStoreKeys
 import com.google.firebase.Firebase
 
@@ -54,7 +62,10 @@ fun MainView(dataStoreManager: DataStoreManager,
              friendsViewModel: FriendsViewModel,
              datePlannerViewModel: DatePlannerViewModel,
              settingsViewModel: SettingsViewModel,
-             topBarTitle: MutableState<String>
+             availablePeopleViewModel: AvailablePeopleViewModel,
+             topBarTitle: MutableState<String>,
+             topBarIconAction: MutableState<() -> Unit>,
+             notificationCount: MutableState<Int>
              ) {
 
     var selectedTab by remember { mutableStateOf(0) }
@@ -99,6 +110,42 @@ fun MainView(dataStoreManager: DataStoreManager,
                         )
 
                             },
+                    actions = {
+                        IconButton(
+                            onClick = topBarIconAction.value
+                        ) {
+                            when (topBarTitle.value) {
+                                "Available" ->
+                                    Box() {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.group_24px),
+                                            contentDescription = "friend",
+                                            tint = Color.White
+                                        )
+                                        if (notificationCount.value > 0) {
+
+                                            Box(
+                                                contentAlignment = Alignment.Center,
+                                                modifier = Modifier
+                                                    .size(16.dp)
+                                                    .background(Color.Red, CircleShape)
+                                                    .align(Alignment.BottomStart)
+                                            ) {
+                                                Text(
+                                                    text = if (notificationCount.value > 10)
+                                                        "10+" else notificationCount.value as String,
+                                                    color = Color.White,
+                                                    fontSize = 10.sp,
+                                                    modifier = Modifier
+                                                        .offset(y = 2.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+
+                            }
+                        }
+                    },
                     navigationIcon = {
 
                         when (selectedTab) {
@@ -177,7 +224,9 @@ fun MainView(dataStoreManager: DataStoreManager,
                         0 -> HomeNavHost(navController = homeNavController,
                             padding = paddingValues,
                             homeViewModel,
-                            datePlannerViewModel
+                            datePlannerViewModel,
+                            availablePeopleViewModel,
+                            friendsViewModel
                         )
                         1 -> FriendsNavHost(navController = friendsNavController,
                             padding = paddingValues,

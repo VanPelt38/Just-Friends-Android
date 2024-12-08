@@ -52,6 +52,7 @@ fun DatePlannerView(viewModel: DatePlannerViewModel) {
         activity?.let {
             viewModel.setNavTitle()
             viewModel.requestLocationPermission(it)
+            viewModel.requestLocationUpdates()
         }
     }
 

@@ -11,7 +11,8 @@ enum class View {
     datePlanner,
     friends,
     settings,
-    availablePeople
+    availablePeople,
+    friendProfile
 }
 
 sealed class NavigationItem(val route: String) {
@@ -26,4 +27,5 @@ sealed class NavigationItem(val route: String) {
     object Friends : NavigationItem(View.friends.name)
     object Settings: NavigationItem(View.settings.name)
     object AvailablePeople: NavigationItem(View.availablePeople.name)
+    object FriendProfile: NavigationItem(View.friendProfile.name)
 }
