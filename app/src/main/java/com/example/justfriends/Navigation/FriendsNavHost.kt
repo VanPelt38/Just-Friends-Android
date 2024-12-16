@@ -8,6 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
+import com.example.justfriends.Features.ChatFeature.ChatView
+import com.example.justfriends.Features.FriendProfileFeature.FriendProfileView
 import com.example.justfriends.Features.FriendsFeature.FriendsViewModel
 import com.example.justfriends.Features.FriendsFeature.FriendsView
 
@@ -28,6 +30,8 @@ fun FriendsNavHost(navController: NavHostController,
     }
 
     NavHost(navController = navController, startDestination = NavigationItem.Friends.route) {
-        composable(NavigationItem.Friends.route) { FriendsView(friendsViewModel, padding) }
+        composable(NavigationItem.Friends.route) { FriendsView(friendsViewModel) }
+        composable(NavigationItem.FriendProfile.route) { FriendProfileView() }
+        composable(NavigationItem.Chat.route) { ChatView() }
     }
 }

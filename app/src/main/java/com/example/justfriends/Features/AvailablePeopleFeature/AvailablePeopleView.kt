@@ -259,7 +259,7 @@ fun AvailablePersonCell(vm: AvailablePeopleViewModel, person: Int) {
                         style = MaterialTheme.typography.titleLarge,
                         fontSize = 15.sp
                     )
-                    Text("${vm.people[person].distanceAway}km",
+                    Text("${vm.people[person].distanceAway} km away",
                         modifier = Modifier.offset(y = 20.dp),
                         style = MaterialTheme.typography.bodyMedium,
                         fontSize = 12.sp,

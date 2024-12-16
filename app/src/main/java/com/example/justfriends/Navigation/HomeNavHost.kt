@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import com.example.justfriends.Features.AvailablePeopleFeature.AvailablePeopleView
 import com.example.justfriends.Features.AvailablePeopleFeature.AvailablePeopleViewModel
+import com.example.justfriends.Features.ChatFeature.ChatView
 import com.example.justfriends.Features.HomeFeature.HomeViewModel
 import com.example.justfriends.Features.HomeFeature.HomeView
 import com.example.justfriends.Features.MostCompatibleFeature.MostCompatibleView
@@ -33,6 +34,7 @@ fun HomeNavHost(navController: NavHostController,
     val homeViewState by homeViewModel.navigateTo.collectAsState()
     val datePlannerViewState by datePlannerViewModel.navigateTo.collectAsState()
     val availablePeopleViewState by availablePeopleViewModel.navigateTo.collectAsState()
+    val friendsViewState by friendsViewModel.navigateTo.collectAsState()
 
     LaunchedEffect(homeViewState) {
         homeViewState?.let { destination ->
@@ -55,13 +57,21 @@ fun HomeNavHost(navController: NavHostController,
         }
     }
 
+    LaunchedEffect(friendsViewState) {
+        friendsViewState?.let { destination ->
+            navController.navigate(destination)
+            friendsViewModel.onNavigationComplete()
+        }
+    }
+
     NavHost(navController = navController, startDestination = NavigationItem.Home.route) {
         composable(NavigationItem.Home.route) { HomeView(homeViewModel, padding) }
         composable(NavigationItem.UserProfile.route) { UserProfileView() }
         composable(NavigationItem.MostCompatible.route) { MostCompatibleView() }
         composable(NavigationItem.DatePlanner.route) { DatePlannerView(datePlannerViewModel) }
         composable(NavigationItem.AvailablePeople.route) { AvailablePeopleView(availablePeopleViewModel) }
-        composable(NavigationItem.Friends.route) { FriendsView(friendsViewModel, padding) }
+        composable(NavigationItem.Friends.route) { FriendsView(friendsViewModel) }
         composable(NavigationItem.FriendProfile.route) { FriendProfileView() }
+        composable(NavigationItem.Chat.route) { ChatView() }
     }
 }

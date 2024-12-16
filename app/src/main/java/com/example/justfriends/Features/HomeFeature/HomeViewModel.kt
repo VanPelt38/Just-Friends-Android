@@ -36,9 +36,6 @@ class HomeViewModel(justFriends: Application,
 
     init {
         auth = FirebaseAuth.getInstance()
-        setFalseForOnChatView()
-        loadUserData()
-        setDistancePreference()
     }
 
     fun setNavTitle() {

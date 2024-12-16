@@ -133,7 +133,7 @@ fun MainView(dataStoreManager: DataStoreManager,
                                             ) {
                                                 Text(
                                                     text = if (notificationCount.value > 10)
-                                                        "10+" else notificationCount.value as String,
+                                                        "10+" else notificationCount.value.toString(),
                                                     color = Color.White,
                                                     fontSize = 10.sp,
                                                     modifier = Modifier

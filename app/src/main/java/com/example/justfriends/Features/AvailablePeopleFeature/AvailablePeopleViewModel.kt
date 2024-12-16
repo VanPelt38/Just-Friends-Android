@@ -154,8 +154,8 @@ class AvailablePeopleViewModel(private val justFriends: Application,
                         name = data["name"] as? String ?: "error",
                         distanceAway = data["distanceAway"] as? Int ?: 0,
                         chatID = data["chatID"] as? String ?: "error",
-                        picture = data["picture"] as? String ?: "error",
-                        ID = data["userID"] as? String ?: "error"
+                        picture = data["imageURL"] as? String ?: "error",
+                        ID = data["ID"] as? String ?: "error"
                     )
                     matchStatusesArray.add(match)
                 }
