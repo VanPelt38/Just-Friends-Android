@@ -17,6 +17,9 @@ object DataStoreKeys {
     val onChatView = stringPreferencesKey("onChatView")
     val distancePreference = stringPreferencesKey("distancePreference")
     val lastShareDate = stringPreferencesKey("lastShareDate")
+    val friendIDForChat = stringPreferencesKey("friendIDForChat")
+    val friendIDForProfile = stringPreferencesKey("friendIDForProfile")
+    val lastCompatibleCalculation = stringPreferencesKey("lastCompatibleCalculation")
 }
 
 class DataStoreManager(private val context: Context) {

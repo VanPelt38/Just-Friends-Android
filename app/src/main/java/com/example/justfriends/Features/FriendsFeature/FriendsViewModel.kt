@@ -11,6 +11,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.justfriends.DataModels.MatchModel
 import com.example.justfriends.DataModels.User
+import com.example.justfriends.Navigation.NavigationItem
 import com.example.justfriends.Navigation.View
 import com.example.justfriends.Utils.DataStoreKeys
 import com.example.justfriends.Utils.DataStoreManager
@@ -31,7 +32,9 @@ import java.util.UUID
 
 class FriendsViewModel(justFriends: Application,
                     private val dataStoreManager: DataStoreManager,
-                    private val navBarTitle: MutableState<String>
+                       private val currentView: MutableState<String>,
+                    private val navBarTitle: MutableState<String>,
+                       private val shouldShowFAB: MutableState<Boolean>
 ): AndroidViewModel(justFriends) {
 
     private lateinit var auth: FirebaseAuth
@@ -133,7 +136,7 @@ class FriendsViewModel(justFriends: Application,
                         "accepted" to true,
                         "fcmToken" to myDetails?.fcmToken,
                         "chatID" to chatID,
-                        "realmID" to "android",
+                        "realmID" to UUID.randomUUID(),
                         "ownUserID" to friends[selectedFriendIndex ?: 0].ID,
                         "distanceAway" to friends[selectedFriendIndex ?: 0].distanceAway
                     )
@@ -171,6 +174,7 @@ class FriendsViewModel(justFriends: Application,
                     .await()
             }
             selectedFriendIndex = null
+            persistFriendIDForChat(friends[selectedFriendIndex ?: 0].ID)
             goToChat()
         }
     }
@@ -351,17 +355,29 @@ class FriendsViewModel(justFriends: Application,
         isLoading.value = false
     }
 
-    fun setNavTitle() {
+    fun setScaffold() {
+        currentView.value = ""
         navBarTitle.value = "Friends"
+        shouldShowFAB.value = true
     }
 
-    fun seeFriendProfile() {
-        onNavigate(View.friendProfile.name)
+    fun seeFriendProfileForIndex(index: Int) {
+        viewModelScope.launch {
+            dataStoreManager.write(DataStoreKeys.friendIDForProfile, friends[index].ID)
+            onNavigate(View.friendProfile.name)
+        }
     }
 
     fun goToChat() {
             onNavigate(View.chatView.name)
     }
+
+    fun persistFriendIDForChat(userID: String)  {
+        viewModelScope.launch {
+            dataStoreManager.write(DataStoreKeys.friendIDForChat, userID)
+        }
+    }
+
 
     fun onNavigate(destination: String) {
         _navigateTo.value = destination

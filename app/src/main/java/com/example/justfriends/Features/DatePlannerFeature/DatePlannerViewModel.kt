@@ -37,7 +37,9 @@ import kotlinx.coroutines.tasks.await
 
 class DatePlannerViewModel(private val justFriends: Application,
                        private val dataStoreManager: DataStoreManager,
-                       private val navBarTitle: MutableState<String>
+                           private val currentView: MutableState<String>,
+                       private val navBarTitle: MutableState<String>,
+                           private val shouldShowFAB: MutableState<Boolean>
 ): AndroidViewModel(justFriends) {
 
     private val _navigateTo = MutableStateFlow<String?>(null)
@@ -78,8 +80,10 @@ class DatePlannerViewModel(private val justFriends: Application,
         fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
-    fun setNavTitle() {
+    fun setScaffold() {
+        currentView.value = ""
         navBarTitle.value = "Planner"
+        shouldShowFAB.value = true
     }
 
     fun requestLocationPermission(activity: Activity) {

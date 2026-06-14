@@ -8,14 +8,16 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
-import com.example.justfriends.Features.SettingsFeature.SettingsViewModel
+import com.example.justfriends.Features.SettingsFeature.DistancePreferenceView
 import com.example.justfriends.Features.SettingsFeature.SettingsView
+import com.example.justfriends.Features.SettingsFeature.SettingsViewModel
 
 
 @Composable
-fun SettingsNavHost(navController: NavHostController,
-                   padding: PaddingValues,
-                   settingsViewModel: SettingsViewModel
+fun SettingsNavHost(
+    navController: NavHostController,
+    padding: PaddingValues,
+    settingsViewModel: SettingsViewModel
 ) {
 
     val settingsViewState by settingsViewModel.navigateTo.collectAsState()
@@ -29,5 +31,6 @@ fun SettingsNavHost(navController: NavHostController,
 
     NavHost(navController = navController, startDestination = NavigationItem.Settings.route) {
         composable(NavigationItem.Settings.route) { SettingsView(settingsViewModel, padding) }
+        composable(NavigationItem.DistancePreference.route) { DistancePreferenceView(settingsViewModel) }
     }
 }

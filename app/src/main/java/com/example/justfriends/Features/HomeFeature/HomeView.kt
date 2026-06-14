@@ -48,7 +48,7 @@ fun HomeView(viewModel: HomeViewModel, padding: PaddingValues) {
 
     LaunchedEffect(Unit) {
         activity?.let {
-            viewModel.setNavTitle()
+            viewModel.setScaffold()
             viewModel.setFalseForOnChatView()
             viewModel.loadUserData()
             viewModel.setDistancePreference()

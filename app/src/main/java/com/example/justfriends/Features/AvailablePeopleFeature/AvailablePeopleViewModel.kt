@@ -43,8 +43,10 @@ import java.text.SimpleDateFormat
 class AvailablePeopleViewModel(private val justFriends: Application,
                            private val dataStoreManager: DataStoreManager,
                            private val navBarTitle: MutableState<String>,
+                               private val currentView: MutableState<String>,
     private val navBarAction: MutableState<() -> Unit>,
-                               private val notificationCount: MutableState<Int>
+                               private val notificationCount: MutableState<Int>,
+    private val shouldShowFAB: MutableState<Boolean>
 ): AndroidViewModel(justFriends) {
 
     private val _navigateTo = MutableStateFlow<String?>(null)
@@ -313,8 +315,11 @@ class AvailablePeopleViewModel(private val justFriends: Application,
         return false
     }
 
-    fun seeFriendProfile() {
-        onNavigate(View.friendProfile.name)
+    fun seeFriendProfileForIndex(index: Int) {
+        viewModelScope.launch {
+            dataStoreManager.write(DataStoreKeys.friendIDForProfile, people[index].daterID)
+            onNavigate(View.friendProfile.name)
+        }
     }
 
     suspend fun listenForNewNotifications() {
@@ -647,9 +652,11 @@ class AvailablePeopleViewModel(private val justFriends: Application,
             }
     }
 
-    fun setNavTitleAndAction() {
+    fun setScaffold() {
         navBarTitle.value = "Available"
+        currentView.value = "Available"
         navBarAction.value = { navigateToFriends() }
+        shouldShowFAB.value = true
     }
 
     fun navigateToFriends() {
