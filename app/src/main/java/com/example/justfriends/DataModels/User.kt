@@ -7,7 +7,7 @@ data class User(
     val name: String,
     val interests: Array<String>? = null,
     val occupation: String? = null,
-    val picture: String? = null,
+    var picture: String? = null,
     val profilePicRef: String? = null,
     val summary: String? = null,
     val town: String? = null,

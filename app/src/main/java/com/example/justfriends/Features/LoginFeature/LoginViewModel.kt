@@ -18,7 +18,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 
-class LoginViewModel(justFriends: Application, private val dataStoreManager: DataStoreManager): AndroidViewModel(justFriends) {
+class LoginViewModel(justFriends: Application,
+                     val dataStoreManager: DataStoreManager): AndroidViewModel(justFriends) {
 
     var userEmail = mutableStateOf("")
     var userPassword = mutableStateOf("")
@@ -30,6 +31,10 @@ class LoginViewModel(justFriends: Application, private val dataStoreManager: Dat
     private val db = FirebaseFirestore.getInstance()
     private val _navigateTo = MutableStateFlow<String?>(null)
     val navigateTo: StateFlow<String?> = _navigateTo.asStateFlow()
+    var forgotPasswordSheetPresented = mutableStateOf(false)
+    var showForgotPasswordError = mutableStateOf(false)
+    var forgotPasswordErrorMessage = mutableStateOf("")
+    var email = mutableStateOf("")
 
     init {
         viewModelScope.launch {
@@ -45,6 +50,25 @@ class LoginViewModel(justFriends: Application, private val dataStoreManager: Dat
 
     fun onNavigationComplete() {
         _navigateTo.value = null
+    }
+
+    fun sendLink() {
+        if (!email.value.isEmpty()) {
+            auth = Firebase.auth
+            auth.sendPasswordResetEmail(email.value)
+                .addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        forgotPasswordErrorMessage.value = task.exception?.localizedMessage ?: ""
+                        showForgotPasswordError.value = true
+                    } else {
+                        email.value = ""
+                        showForgotPasswordError.value = false
+                    }
+                }
+        } else {
+            forgotPasswordErrorMessage.value = "Please enter your email address in a valid format."
+            showForgotPasswordError.value = true
+        }
     }
 
     fun signInPressed() {

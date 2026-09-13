@@ -1,7 +1,6 @@
 package com.example.justfriends.Features.FriendsFeature
 
 import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -9,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -72,7 +72,7 @@ fun FriendsView(viewModel: FriendsViewModel) {
     LaunchedEffect(true) {
         activity?.let {
             viewModel.isLoading.value = true
-            viewModel.setNavTitle()
+            viewModel.setScaffold()
             viewModel.loadAll()
         }
     }
@@ -192,27 +192,28 @@ fun FriendCell(vm: FriendsViewModel, friend: Int, onDelete: () -> Unit) {
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
+            val isActive = dismissState.targetValue == SwipeToDismissBoxValue.EndToStart
             Box(
                 modifier = Modifier
-                    .size(width = 400.dp, height = 60.dp)
-                    .background(Color.Red)
-                    .offset(5.dp, 5.dp)
+                    .fillMaxSize()
+                    .background(if (isActive) Color.Red else Color.Transparent)
+                    .padding(end = 16.dp),
+                contentAlignment = Alignment.CenterEnd
             ) {
-                Text(
-                    text = "Delete",
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                )
+                if (isActive) {
+                    Text(text = "Delete", color = Color.White)
+                }
             }
         }
     ) {
     Box {
         Card(
             modifier = Modifier
-                .size(width = 420.dp, height = 70.dp)
+                .size(width = 420.dp, height = 140.dp)
                 .padding(5.dp)
                 .clickable {
                     if (vm.friends[friend].accepted) {
+                        vm.persistFriendIDForChat(vm.friends[friend].ID)
                         vm.goToChat()
                     }
                 },
@@ -232,7 +233,7 @@ fun FriendCell(vm: FriendsViewModel, friend: Int, onDelete: () -> Unit) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
-                        .height(70.dp),
+                        .height(140.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -249,7 +250,7 @@ fun FriendCell(vm: FriendsViewModel, friend: Int, onDelete: () -> Unit) {
                     )
                     if (!vm.friends[friend].accepted) {
                         Row(
-                            modifier = Modifier.offset(y = 40.dp)
+                            modifier = Modifier.offset(y = 50.dp, x = 30.dp)
                         ) {
                             Button(
                                 onClick = {
@@ -260,19 +261,19 @@ fun FriendCell(vm: FriendsViewModel, friend: Int, onDelete: () -> Unit) {
                                     vm.errorAlertStateDecline.value = "No"
                                 },
                                 modifier = Modifier
-                                    .width(50.dp)
-                                    .height(10.dp),
+                                    .width(100.dp)
+                                    .height(30.dp),
                                 shape = RoundedCornerShape(16.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Black,
                                     contentColor = Color.White
-                                )
+                                ),
                             ) {
                                 Text(
                                     text = "accept",
                                     color = Color.White,
                                     style = MaterialTheme.typography.titleLarge,
-                                    fontSize = 5.sp
+                                    fontSize = 10.sp
                                 )
                             }
                             Spacer(modifier = Modifier.width(5.dp))
@@ -281,8 +282,8 @@ fun FriendCell(vm: FriendsViewModel, friend: Int, onDelete: () -> Unit) {
                                     // reject friend request
                                 },
                                 modifier = Modifier
-                                    .width(50.dp)
-                                    .height(10.dp),
+                                    .width(100.dp)
+                                    .height(30.dp),
                                 shape = RoundedCornerShape(16.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color.Black,
@@ -293,7 +294,7 @@ fun FriendCell(vm: FriendsViewModel, friend: Int, onDelete: () -> Unit) {
                                     text = "no thanks",
                                     color = Color.White,
                                     style = MaterialTheme.typography.titleLarge,
-                                    fontSize = 5.sp
+                                    fontSize = 10.sp
                                 )
                             }
                         }
@@ -322,7 +323,7 @@ fun FriendCell(vm: FriendsViewModel, friend: Int, onDelete: () -> Unit) {
                 }
             }
         }
-        ProfileButton(alignment = Modifier.align(Alignment.BottomStart), vm = vm)
+        ProfileButton(alignment = Modifier.align(Alignment.BottomStart), vm = vm, friendIndex = friend)
     }
 }
 }
@@ -331,8 +332,8 @@ fun FriendCell(vm: FriendsViewModel, friend: Int, onDelete: () -> Unit) {
 fun ProfilePicture(vm: FriendsViewModel, friend: Int) {
     Box(
         modifier = Modifier
-            .width(70.dp)
-            .height(70.dp)
+            .width(140.dp)
+            .height(140.dp)
             .background(Color.White)
     ) {
         if (vm.friends[friend].picture == null) {
@@ -358,19 +359,19 @@ fun ProfilePicture(vm: FriendsViewModel, friend: Int) {
 }
 
 @Composable
-fun ProfileButton(alignment: Modifier, vm: FriendsViewModel) {
+fun ProfileButton(alignment: Modifier, vm: FriendsViewModel, friendIndex: Int) {
 
     Box(
         modifier = alignment
     ) {
         IconButton(
             onClick = {
-                vm.seeFriendProfile()
+                vm.seeFriendProfileForIndex(friendIndex)
             },
             modifier = Modifier
-                .width(15.dp)
-                .height(15.dp)
-                .offset(x = 65.dp)
+                .width(20.dp)
+                .height(20.dp)
+                .offset(x = 135.dp)
                 .zIndex(1f)
             ,
             colors = IconButtonDefaults.iconButtonColors(

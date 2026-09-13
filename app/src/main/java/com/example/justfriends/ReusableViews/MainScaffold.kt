@@ -52,21 +52,34 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.justfriends.Features.AvailablePeopleFeature.AvailablePeopleViewModel
+import com.example.justfriends.Features.ChatFeature.ChatViewModel
+import com.example.justfriends.Features.FriendProfileFeature.FriendProfileViewModel
+import com.example.justfriends.Features.MostCompatibleFeature.MostCompatibleViewModel
+import com.example.justfriends.Features.UserProfileFeature.EditProfileViewModel
+import com.example.justfriends.Features.UserProfileFeature.UserProfileViewModel
 import com.example.justfriends.R
 import com.example.justfriends.Utils.DataStoreKeys
 import com.google.firebase.Firebase
 
 @Composable
-fun MainView(dataStoreManager: DataStoreManager,
-             homeViewModel: HomeViewModel,
-             friendsViewModel: FriendsViewModel,
-             datePlannerViewModel: DatePlannerViewModel,
-             settingsViewModel: SettingsViewModel,
-             availablePeopleViewModel: AvailablePeopleViewModel,
-             topBarTitle: MutableState<String>,
-             topBarIconAction: MutableState<() -> Unit>,
-             notificationCount: MutableState<Int>
-             ) {
+fun MainView(
+    dataStoreManager: DataStoreManager,
+    homeViewModel: HomeViewModel,
+    friendsViewModel: FriendsViewModel,
+    datePlannerViewModel: DatePlannerViewModel,
+    settingsViewModel: SettingsViewModel,
+    availablePeopleViewModel: AvailablePeopleViewModel,
+    chatViewModel: ChatViewModel,
+    topBarTitle: MutableState<String>,
+    currentView: MutableState<String>,
+    topBarIconAction: MutableState<() -> Unit>,
+    notificationCount: MutableState<Int>,
+    shouldShowFAB: MutableState<Boolean>,
+    userProfileViewModel: UserProfileViewModel,
+    editProfileViewModel: EditProfileViewModel,
+    friendProfileViewModel: FriendProfileViewModel,
+    mostCompatibleViewModel: MostCompatibleViewModel
+) {
 
     var selectedTab by remember { mutableStateOf(0) }
     val homeNavController = rememberNavController()
@@ -114,7 +127,7 @@ fun MainView(dataStoreManager: DataStoreManager,
                         IconButton(
                             onClick = topBarIconAction.value
                         ) {
-                            when (topBarTitle.value) {
+                            when (currentView.value) {
                                 "Available" ->
                                     Box() {
                                         Icon(
@@ -142,7 +155,12 @@ fun MainView(dataStoreManager: DataStoreManager,
                                             }
                                         }
                                     }
-
+                                "Chat" ->
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.flag_2_24px),
+                                        contentDescription = "flag",
+                                        tint = Color.White
+                                    )
                             }
                         }
                     },
@@ -182,31 +200,40 @@ fun MainView(dataStoreManager: DataStoreManager,
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = {
+                if (shouldShowFAB.value) {
+                    FloatingActionButton(
+                        onClick = {
 
-                    val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                        data = Uri.parse("mailto:")
-                        putExtra(Intent.EXTRA_EMAIL, arrayOf("justfriendshelpdesk@gmail.com"))
-                        putExtra(Intent.EXTRA_SUBJECT, "Just Friends Support Issue")
-                        putExtra(Intent.EXTRA_TEXT, "User ID: ${auth.currentUser?.uid}, " +
-                                "Email: ${userEmail}, " +
-                                "Version: ${Build.VERSION.RELEASE}")
-                    }
+                            val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                                data = Uri.parse("mailto:")
+                                putExtra(
+                                    Intent.EXTRA_EMAIL,
+                                    arrayOf("justfriendshelpdesk@gmail.com")
+                                )
+                                putExtra(Intent.EXTRA_SUBJECT, "Just Friends Support Issue")
+                                putExtra(
+                                    Intent.EXTRA_TEXT, "User ID: ${auth.currentUser?.uid}, " +
+                                            "Email: ${userEmail}, " +
+                                            "Version: ${Build.VERSION.RELEASE}"
+                                )
+                            }
 
-                    if (emailIntent.resolveActivity(context.packageManager) != null) {
-                        context.startActivity(emailIntent)
-                    } else {
-                        errorAlertStateTitle = "Uh-oh"
-                        errorAlertState = "Looks like your device doesn't have email configured." +
-                                "Please set it up and try again." +
-                                "You can also email us directly at justfriendshelpdesk@gmail.com ."
-                    }
+                            if (emailIntent.resolveActivity(context.packageManager) != null) {
+                                context.startActivity(emailIntent)
+                            } else {
+                                errorAlertStateTitle = "Uh-oh"
+                                errorAlertState =
+                                    "Looks like your device doesn't have email configured." +
+                                            "Please set it up and try again." +
+                                            "You can also email us directly at justfriendshelpdesk@gmail.com ."
+                            }
 
-                },
-                    shape = CircleShape,
-                   containerColor = Color(red = 19, green = 0, blue = 142)
+                        },
+                        shape = CircleShape,
+                        containerColor = Color(red = 19, green = 0, blue = 142)
                     ) {
-                    Icon(Icons.Filled.Email, contentDescription = "Add item")
+                        Icon(Icons.Filled.Email, contentDescription = "Add item")
+                    }
                 }
             },
             bottomBar = {
@@ -221,20 +248,30 @@ fun MainView(dataStoreManager: DataStoreManager,
                         .padding(paddingValues)
                 ) {
                     when (selectedTab) {
-                        0 -> HomeNavHost(navController = homeNavController,
+                        0 -> HomeNavHost(
+                            navController = homeNavController,
                             padding = paddingValues,
-                            homeViewModel,
-                            datePlannerViewModel,
-                            availablePeopleViewModel,
-                            friendsViewModel
+                            homeViewModel = homeViewModel,
+                            datePlannerViewModel = datePlannerViewModel,
+                            availablePeopleViewModel = availablePeopleViewModel,
+                            friendsViewModel = friendsViewModel,
+                            chatViewModel = chatViewModel,
+                            userProfileViewModel = userProfileViewModel,
+                            editProfileViewModel = editProfileViewModel,
+                            friendProfileViewModel = friendProfileViewModel,
+                            mostCompatibleViewModel = mostCompatibleViewModel
                         )
-                        1 -> FriendsNavHost(navController = friendsNavController,
+                        1 -> FriendsNavHost(
+                            navController = friendsNavController,
                             padding = paddingValues,
-                            friendsViewModel
-                            )
-                        2 -> SettingsNavHost(navController = settingsNavController,
+                            friendsViewModel = friendsViewModel,
+                            chatViewModel = chatViewModel,
+                            friendProfileViewModel = friendProfileViewModel
+                        )
+                        2 -> SettingsNavHost(
+                            navController = settingsNavController,
                             padding = paddingValues,
-                            settingsViewModel
+                            settingsViewModel = settingsViewModel
                         )
                     }
                 }

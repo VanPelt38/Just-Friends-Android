@@ -65,7 +65,7 @@ fun AvailablePeopleView(viewModel: AvailablePeopleViewModel) {
         activity?.let {
             viewModel.isLoading.value = true
             viewModel.snackBarMessage.value = "Your plan will be available for 12 hours"
-            viewModel.setNavTitleAndAction()
+            viewModel.setScaffold()
                 viewModel.loadAll()
         }
     }
@@ -288,7 +288,7 @@ fun AvailablePersonCell(vm: AvailablePeopleViewModel, person: Int) {
                 }
             }
         }
-        ProfileButton(alignment = Modifier.align(Alignment.BottomStart), vm = vm)
+        ProfileButton(alignment = Modifier.align(Alignment.BottomStart), vm = vm, personIndex = person)
     }
 }
 
@@ -323,14 +323,14 @@ fun ProfilePicture(vm: AvailablePeopleViewModel, person: Int) {
 }
 
 @Composable
-fun ProfileButton(alignment: Modifier, vm: AvailablePeopleViewModel) {
+fun ProfileButton(alignment: Modifier, vm: AvailablePeopleViewModel, personIndex: Int) {
 
     Box(
         modifier = alignment
     ) {
         IconButton(
             onClick = {
-                vm.seeFriendProfile()
+                vm.seeFriendProfileForIndex(personIndex)
             },
             modifier = Modifier
                 .width(15.dp)

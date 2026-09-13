@@ -1,5 +1,6 @@
 package com.example.justfriends.Features.LoginFeature
 
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
@@ -14,17 +15,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun LoginView(loginViewModel: LoginViewModel) {
@@ -165,6 +171,63 @@ fun LoginView(loginViewModel: LoginViewModel) {
                             Text("Okay")
                         }
                 })
+            }
+            if (loginViewModel.forgotPasswordSheetPresented.value) {
+                ModalBottomSheet(
+                    onDismissRequest = { loginViewModel.forgotPasswordSheetPresented.value = false }
+                ) {
+                    Spacer(modifier = Modifier.height(120.dp))
+                    Text(
+                        "Please enter your email address and we'll send you a link to reset your password.",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = Color.Black,
+                        fontSize = 30.sp
+                    )
+                    Spacer(modifier = Modifier.height(30.dp))
+                    OutlinedTextField(
+                        value = loginViewModel.email.value,
+                        onValueChange = { loginViewModel.email.value = it },
+                        modifier = Modifier
+                            .width(200.dp)
+                            .height(50.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        ),
+                        textStyle = MaterialTheme.typography.bodyMedium.copy(fontSize = 20.sp),
+                        singleLine = true
+                    )
+                    Spacer(modifier = Modifier.height(50.dp))
+                    Button(
+                        onClick = {
+                            loginViewModel.sendLink()
+                        },
+                        modifier = Modifier
+                            .width(200.dp)
+                            .height(40.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Black,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(
+                            text = "send link",
+                            color = Color.White,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontSize = 20.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(30.dp))
+                    if (loginViewModel.showForgotPasswordError.value) {
+                        Text(
+                            loginViewModel.forgotPasswordErrorMessage.value,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Red,
+                            fontSize = 15.sp
+                        )
+                    }
+                }
             }
 
         }

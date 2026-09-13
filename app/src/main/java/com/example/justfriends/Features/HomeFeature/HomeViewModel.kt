@@ -23,7 +23,9 @@ import kotlinx.coroutines.tasks.await
 
 class HomeViewModel(justFriends: Application,
                     private val dataStoreManager: DataStoreManager,
-    private val navBarTitle: MutableState<String>
+                    private val currentView: MutableState<String>,
+    private val navBarTitle: MutableState<String>,
+                    private val shouldShowFAB: MutableState<Boolean>
 ): AndroidViewModel(justFriends) {
 
     private val db = FirebaseFirestore.getInstance()
@@ -38,8 +40,10 @@ class HomeViewModel(justFriends: Application,
         auth = FirebaseAuth.getInstance()
     }
 
-    fun setNavTitle() {
+    fun setScaffold() {
+            currentView.value = ""
             navBarTitle.value = navBarString
+        shouldShowFAB.value = true
     }
 
     fun setFalseForOnChatView() {

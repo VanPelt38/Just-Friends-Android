@@ -50,7 +50,7 @@ fun DatePlannerView(viewModel: DatePlannerViewModel) {
 
     LaunchedEffect(Unit) {
         activity?.let {
-            viewModel.setNavTitle()
+            viewModel.setScaffold()
             viewModel.requestLocationPermission(it)
             viewModel.requestLocationUpdates()
         }
