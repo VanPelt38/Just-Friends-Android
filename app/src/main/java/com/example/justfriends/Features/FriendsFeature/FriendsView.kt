@@ -192,17 +192,17 @@ fun FriendCell(vm: FriendsViewModel, friend: Int, onDelete: () -> Unit) {
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
+            val isActive = dismissState.targetValue == SwipeToDismissBoxValue.EndToStart
             Box(
                 modifier = Modifier
-                    .size(width = 400.dp, height = 60.dp)
-                    .background(Color.Red)
-                    .offset(5.dp, 5.dp)
+                    .fillMaxSize()
+                    .background(if (isActive) Color.Red else Color.Transparent)
+                    .padding(end = 16.dp),
+                contentAlignment = Alignment.CenterEnd
             ) {
-                Text(
-                    text = "Delete",
-                    color = Color.White,
-                    modifier = Modifier.align(Alignment.CenterEnd)
-                )
+                if (isActive) {
+                    Text(text = "Delete", color = Color.White)
+                }
             }
         }
     ) {

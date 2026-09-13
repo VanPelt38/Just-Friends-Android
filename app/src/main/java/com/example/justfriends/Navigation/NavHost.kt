@@ -50,17 +50,17 @@ fun NavHost(
 
     val app = LocalContext.current.applicationContext as Application
 
-    val homeViewModel = HomeViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB)
-    val friendsViewModel = FriendsViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB)
-    val chatViewModel = ChatViewModel(app, dataStoreManager, topBarTitle, currentView, topBarIconAction, shouldShowFAB)
-    val settingsViewModel = SettingsViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB)
-    val datePlannerViewModel = DatePlannerViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB)
-    val availablePeopleViewModel = AvailablePeopleViewModel(app, dataStoreManager, topBarTitle, currentView, topBarIconAction, notificationCount, shouldShowFAB)
-    val userProfileViewModel = UserProfileViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB)
-    val editProfileViewModel = EditProfileViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB)
-    val friendProfileViewModel = FriendProfileViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB)
-    val mostCompatibleViewModel = MostCompatibleViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB)
-    val forgotPasswordViewModel = ForgotPasswordViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB)
+    val homeViewModel = remember { HomeViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB) }
+    val friendsViewModel = remember { FriendsViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB) }
+    val chatViewModel = remember { ChatViewModel(app, dataStoreManager, topBarTitle, currentView, topBarIconAction, shouldShowFAB) }
+    val settingsViewModel = remember { SettingsViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB) }
+    val datePlannerViewModel = remember { DatePlannerViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB) }
+    val availablePeopleViewModel = remember { AvailablePeopleViewModel(app, dataStoreManager, topBarTitle, currentView, topBarIconAction, notificationCount, shouldShowFAB) }
+    val userProfileViewModel = remember { UserProfileViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB) }
+    val editProfileViewModel = remember { EditProfileViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB) }
+    val friendProfileViewModel = remember { FriendProfileViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB) }
+    val mostCompatibleViewModel = remember { MostCompatibleViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB) }
+    val forgotPasswordViewModel = remember { ForgotPasswordViewModel(app, dataStoreManager, currentView, topBarTitle, shouldShowFAB) }
 
     val settingsRootNavState by settingsViewModel.navigateToRoot.collectAsState()
 

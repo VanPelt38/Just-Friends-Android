@@ -32,14 +32,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +57,7 @@ import com.example.justfriends.DataModels.Compatible
 import com.example.justfriends.R
 import com.example.justfriends.ReusableViews.brandPurple
 import com.example.justfriends.ui.theme.JustFriendsTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun MostCompatibleView(viewModel: MostCompatibleViewModel) {
@@ -129,21 +133,59 @@ fun MostCompatibleView(viewModel: MostCompatibleViewModel) {
                     )
                 }
             }
+
+            val snackBarView by viewModel.snackBarMessage
+            snackBarView?.let {
+                Box(modifier = Modifier.align(Alignment.BottomCenter)) {
+                    Snackbar(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .graphicsLayer { alpha = 0.7f }
+                    ) {
+                        Text(it, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+                    }
+                }
+                LaunchedEffect(Unit) {
+                    delay(3000)
+                    viewModel.snackBarMessage.value = null
+                }
+            }
         }
     }
 
     errorAlert?.let {
         AlertDialog(
-            onDismissRequest = { viewModel.errorAlertState.value = null; viewModel.errorAlertStateTitle.value = null },
+            onDismissRequest = {
+                viewModel.errorAlertState.value = null
+                viewModel.errorAlertStateTitle.value = null
+                viewModel.errorAlertStateAccept.value = null
+                viewModel.errorAlertStateDecline.value = null
+            },
             title = { Text(viewModel.errorAlertStateTitle.value ?: "") },
             text = { Text(it) },
             confirmButton = {
                 Button(onClick = {
+                    if (viewModel.errorAlertState.value == "Are you sure you want to connect with this person?") {
+                        viewModel.startMatching()
+                    }
                     viewModel.errorAlertState.value = null
                     viewModel.errorAlertStateTitle.value = null
                     viewModel.errorAlertStateAccept.value = null
+                    viewModel.errorAlertStateDecline.value = null
                 }) {
                     Text(viewModel.errorAlertStateAccept.value ?: "OK")
+                }
+            },
+            dismissButton = {
+                if (viewModel.errorAlertStateDecline.value != null) {
+                    Button(onClick = {
+                        viewModel.errorAlertState.value = null
+                        viewModel.errorAlertStateTitle.value = null
+                        viewModel.errorAlertStateAccept.value = null
+                        viewModel.errorAlertStateDecline.value = null
+                    }) {
+                        Text(viewModel.errorAlertStateDecline.value ?: "")
+                    }
                 }
             }
         )
@@ -157,7 +199,14 @@ fun CompatiblePersonCell(vm: MostCompatibleViewModel, index: Int) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(5.dp),
+                .padding(5.dp)
+                .clickable {
+                    vm.selectedFriendIndex = index
+                    vm.errorAlertState.value = "Are you sure you want to connect with this person?"
+                    vm.errorAlertStateTitle.value = "Great Stuff"
+                    vm.errorAlertStateAccept.value = "Yes"
+                    vm.errorAlertStateDecline.value = "No"
+                },
             border = BorderStroke(0.2.dp, Color.Black),
             colors = CardDefaults.cardColors(containerColor = Color.White)
         ) {
